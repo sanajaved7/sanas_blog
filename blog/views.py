@@ -19,7 +19,8 @@ def post_new(request):
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
-            post = form.save(commit=False)
+            form = form.cleaned_data
+            post = Post(title=form["title"], text=form["text"])
             post.author = request.user
             post.save()
             return redirect('blog.views.post_detail', pk=post.pk)
