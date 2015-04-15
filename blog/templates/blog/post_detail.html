@@ -14,5 +14,11 @@
     {% endif %}
         <h1>{{ post.title }}</h1>
         <p>{{ post.text|linebreaks }}</p>
+        <p> Tags:
+        {% for tag in post.tags.all %}
+            {{tag}}
+        {% endfor %}
+        </p>
     </div>
 {% endblock %}
+
