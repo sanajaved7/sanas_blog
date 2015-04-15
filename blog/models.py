@@ -11,7 +11,7 @@ class Tag(models.Model):
 class Post(models.Model):
     author = models.ForeignKey('auth.User')
     title = models.CharField(max_length=200)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, max_length=50)
     text = models.TextField()
     created_date = models.DateTimeField(
         default=timezone.now)

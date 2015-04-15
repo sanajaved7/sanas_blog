@@ -16,7 +16,7 @@
         <p>{{ post.text|linebreaks }}</p>
         <p> Tags:
         {% for tag in post.tags.all %}
-            {{tag}}
+            <a href="/tag/{{tag}}">{{tag}}</a>
         {% endfor %}
         </p>
     </div>
