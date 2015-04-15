@@ -75,5 +75,5 @@ def post_edit(request, pk):
             post = process_post(form.cleaned_data, request)
             return redirect('blog.views.post_detail', pk=post.pk)
     else:
-        form = PostForm(instance=post)
+        form = PostForm(initial=post.__dict__)
     return render(request, 'blog/post_edit.html', {'form': form})
