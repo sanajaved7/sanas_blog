@@ -7,7 +7,7 @@ import datetime
 class PostTest(TestCase):
     ''' Testing Post model '''
     def setUp(self):
-        self.factory = RequestFactory()
+        #self.factory = RequestFactory()
         self.user = User.objects.create_user(
             username = 'sana',
             email='sjaved@umd.edu',
@@ -54,6 +54,28 @@ class PostTest(TestCase):
 
         retrieved_post.unpublish()
         self.assertEqual(retrieved_post.published_date, None)
+
+class TagTest(TestCase):
+    ''' Tests tag functionality in application '''
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username = 'sana',
+            email='sjaved@umd.edu',
+            password='password')
+        self.test_post = Post(
+            author=self.user,
+            title="Test Post",
+            text="This is a test post.",
+            created_date = datetime.datetime(2014,12,27)
+            )
+        self.test_post.save()
+
+    def test_create_tags(self):
+        ''' Tests functionality to create tags '''
+        new_tag = Tag(word='New')
+        new_tag.save()
+        retrieve_tag = Tag.objects.get(word='New')
+        self.assertEqual(retrieve_tag.word, 'New')
 
 
 
