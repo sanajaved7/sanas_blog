@@ -35,6 +35,26 @@ class PostTest(TestCase):
         self.test_post.publish()
         self.assertNotEqual(self.test_post.published_date, None)
 
+    def test_string(self):
+        ''' Tests string function '''
+        self.assertTrue(str(self.test_post) == "Test Post")
+
+    def test_edit(self):
+        ''' Tests edit function '''
+        retrieved_post = Post.objects.get(title="Test Post")
+        retrieved_post.title = 'New Title'
+        retrieved_post.save()
+        self.assertEqual(retrieved_post.title, 'New Title')
+
+    def test_unpublish(self):
+        ''' Tests ability to test_unpublish posts '''
+        retrieved_post = Post.objects.get(title="Test Post")
+        retrieved_post.publish()
+        self.assertNotEqual(retrieved_post.published_date, None)
+
+        retrieved_post.unpublish()
+        self.assertEqual(retrieved_post.published_date, None)
+
 
 
 

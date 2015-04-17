@@ -25,3 +25,7 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    def unpublish(self):
+        self.published_date = None
+        self.save()
+
