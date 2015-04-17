@@ -77,6 +77,16 @@ class TagTest(TestCase):
         retrieve_tag = Tag.objects.get(word='New')
         self.assertEqual(retrieve_tag.word, 'New')
 
+    def test_connect_tag(self):
+        ''' Tests whether we can connect tag to model '''
+        new_tag = Tag(word='New')
+        new_tag.save()
+        second_tag = Tag(word='Second')
+        second_tag.save()
+        self.test_post.tags = [new_tag, second_tag]
+        self.test_post.save()
+        retrieved_post = Post.objects.get(title="Test Post")
+        self.assertEqual(len(retrieved_post.tags.all()), 2)
 
 
 
