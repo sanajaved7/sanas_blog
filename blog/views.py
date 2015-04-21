@@ -16,13 +16,19 @@ def clean_new_tags(new_tags):
 
     for word in new_tags:
         tag, created = Tag.objects.get_or_create(word=word.strip())
-        tag.save()
+        if created:
+            tag.save()
         new_tag_list.append(tag)
     return new_tag_list
 
-def process_post(cleaned_form, request):
+def process_post(cleaned_form, request, existing_pk=None):
     ''' This function passes in the cleaned form data and creates a post '''
-    post = Post(title=cleaned_form["title"], text=cleaned_form["text"])
+    if existing_pk:
+        post = Post.objects.get(pk=existing_pk)
+        post.title = cleaned_form["title"]
+        post.text = cleaned_form["text"]
+    else:
+        post = Post(title=cleaned_form["title"], text=cleaned_form["text"])
     post.author = request.user
     post.save()
     tag_list = clean_new_tags(cleaned_form['new_tags'])
@@ -45,7 +51,8 @@ def post_new(request):
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
-            post = process_post(form.cleaned_data, request)
+            post = process_post(
+                cleaned_form=form.cleaned_data, request=request)
             return redirect('blog.views.post_detail', pk=post.pk)
     else:
         form = PostForm()
@@ -72,10 +79,11 @@ def post_remove(request, pk):
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST)
         if form.is_valid():
-            post = process_post(form.cleaned_data, request)
+            post = process_post(form.cleaned_data, request, pk)
             return redirect('blog.views.post_detail', pk=post.pk)
     else:
+        print(post.__dict__)
         form = PostForm(initial=post.__dict__)
     return render(request, 'blog/post_edit.html', {'form': form})
