@@ -8,6 +8,7 @@ class Tag(models.Model):
     def __str__(self):
         return self.word
 
+
 class Post(models.Model):
     author = models.ForeignKey('auth.User')
     title = models.CharField(max_length=200)
@@ -28,4 +29,3 @@ class Post(models.Model):
     def unpublish(self):
         self.published_date = None
         self.save()
-
