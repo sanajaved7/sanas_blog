@@ -22,14 +22,21 @@ def clean_new_tags(new_tags):
     return new_tag_list
 
 
-def process_post(cleaned_form, request, existing_pk=None):
+def save_edited_post(post, cleaned_form):
+    '''This function passes in existing form and post
+    info and saves edits to the database. '''
+    post.title = cleaned_form["title"]
+    post.text = cleaned_form["text"]
+    tag_list = clean_new_tags(cleaned_form['new_tags'])
+    tag_list.extend(cleaned_form['tag'])
+    for tag in tag_list:
+        post.tags.add(tag)
+    post.save()
+    return post
+
+def process_post(cleaned_form, request):
     ''' This function passes in the cleaned form data and creates a post '''
-    if existing_pk:
-        post = Post.objects.get(pk=existing_pk)
-        post.title = cleaned_form["title"]
-        post.text = cleaned_form["text"]
-    else:
-        post = Post(title=cleaned_form["title"], text=cleaned_form["text"])
+    post = Post(title=cleaned_form["title"], text=cleaned_form["text"])
     post.author = request.user
     post.save()
     tag_list = clean_new_tags(cleaned_form['new_tags'])
@@ -90,9 +97,8 @@ def post_edit(request, pk):
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
-            post = process_post(form.cleaned_data, request, pk)
+            post = save_edited_post(post, form.cleaned_data)
             return redirect('blog.views.post_detail', pk=post.pk)
     else:
-        print(post.__dict__)
         form = PostForm(initial=post.__dict__)
     return render(request, 'blog/post_edit.html', {'form': form})
